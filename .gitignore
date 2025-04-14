@@ -1,0 +1,17 @@
+# Firebase
+.firebase/
+firebase-debug.log
+.firebaserc
+
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SendAI - LLM Response Formatter</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <div class="md2email-container">
+    <h1 class="md2email-title">SendAI</h1>
+    
+    <div class="md2email-options">
+      <span class="md2email-option-label">Email Width:</span>
+      <label class="md2email-option">
+        <input type="radio" name="md2email-width" value="small"> Small
+      </label>
+      <label class="md2email-option">
+        <input type="radio" name="md2email-width" value="medium" checked> Medium
+      </label>
+      <label class="md2email-option">
+        <input type="radio" name="md2email-width" value="large"> Large
+      </label>
+    </div>
+    
+    <div class="md2email-editor-container">
+      <div class="md2email-input-panel">
+        <h2 class="md2email-panel-title">Paste LLM Response (Markdown)</h2>
+        <textarea id="md2email-markdown-input" class="md2email-textarea" placeholder="Paste your markdown here..."></textarea>
+      </div>
+      
+      <div class="md2email-output-panel">
+        <h2 class="md2email-panel-title">Formatted Preview</h2>
+        <div class="md2email-preview-container">
+          <div id="md2email-preview"></div>
+        </div>
+        <div class="md2email-button-container">
+          <button id="md2email-copy-formatted" class="md2email-button">Copy for Gmail</button>
+          <button id="md2email-copy-html" class="md2email-button" style="background-color: #34a853;">Copy HTML</button>
+          <button id="md2email-copy-text" class="md2email-button" style="background-color: #5f6368;">Copy Plain Text</button>
+        </div>
+        <div id="md2email-status" class="md2email-status"></div>
+        <div id="md2email-manual-copy-info" class="md2email-manual-copy-info">
+          If automatic copying doesn't work, you can manually select all content in the preview and copy it, or use the "Copy HTML" button and paste the HTML into Gmail's "Insert as HTML" feature.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hidden textarea for HTML copying -->
+  <textarea id="md2email-textarea-html" readonly></textarea>
+  
+  <!-- Use the browser-friendly version of Marked -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
