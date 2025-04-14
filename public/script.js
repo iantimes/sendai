@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const statusElement = document.getElementById('md2email-status');
   const manualCopyInfo = document.getElementById('md2email-manual-copy-info');
   const hiddenTextarea = document.getElementById('md2email-textarea-html');
+  const includeSignatureCheckbox = document.getElementById('md2email-include-signature');
+  const signatureOptions = document.getElementById('md2email-signature-options');
+  const signatureMessageSelect = document.getElementById('md2email-signature-message');
+  const customSignatureInput = document.getElementById('md2email-custom-signature');
   
   // Configure marked.js
   marked.use({
@@ -63,6 +67,23 @@ I hope this helps with your project planning! Let me know if you need any clarif
   
   // Add event listeners for width options
   document.querySelectorAll('input[name="md2email-width"]').forEach(radio => {
+    radio.addEventListener('change', updatePreview);
+  });
+  
+  // Add event listeners for signature options
+  includeSignatureCheckbox.addEventListener('change', function() {
+    signatureOptions.style.display = this.checked ? 'inline' : 'none';
+    updatePreview();
+  });
+
+  signatureMessageSelect.addEventListener('change', function() {
+    customSignatureInput.style.display = this.value === 'custom' ? 'inline-block' : 'none';
+    updatePreview();
+  });
+
+  customSignatureInput.addEventListener('input', updatePreview);
+
+  document.querySelectorAll('input[name="md2email-signature-position"]').forEach(radio => {
     radio.addEventListener('change', updatePreview);
   });
   
@@ -211,6 +232,35 @@ I hope this helps with your project planning! Let me know if you need any clarif
     // Get the selected width
     const maxWidth = getSelectedWidth();
     
+    // Check if signature should be included
+    const includeSignature = includeSignatureCheckbox.checked;
+    let signatureHtml = '';
+    
+    if (includeSignature) {
+      // Get signature position
+      const signaturePosition = document.querySelector('input[name="md2email-signature-position"]:checked').value;
+      
+      // Get signature message
+      let signatureMessage = '';
+      const selectedMessageType = signatureMessageSelect.value;
+      
+      if (selectedMessageType === 'custom') {
+        signatureMessage = customSignatureInput.value.trim() || 'I\'ve verified this AI response';
+      } else {
+        const selectedOption = signatureMessageSelect.options[signatureMessageSelect.selectedIndex];
+        signatureMessage = selectedOption.text;
+      }
+      
+      // Create signature HTML
+      signatureHtml = `
+        <div style="padding: 10px 15px; margin: ${signaturePosition === 'top' ? '0 0 20px 0' : '20px 0 0 0'}; 
+                    background-color: #f2f7ff; border-left: 3px solid #4285f4; 
+                    font-style: italic; color: #555; font-size: 14px; border-radius: 0 4px 4px 0;">
+          ${signatureMessage}
+        </div>
+      `;
+    }
+    
     // Create a table-based layout that Gmail will preserve
     // This uses a structure Gmail is less likely to strip out
     return `
@@ -220,7 +270,9 @@ I hope this helps with your project planning! Let me know if you need any clarif
         </tr>
         <tr>
           <td style="padding: 20px 25px;">
+            ${includeSignature && document.querySelector('input[name="md2email-signature-position"]:checked').value === 'top' ? signatureHtml : ''}
             ${processedContent}
+            ${includeSignature && document.querySelector('input[name="md2email-signature-position"]:checked').value === 'bottom' ? signatureHtml : ''}
           </td>
         </tr>
         <tr>
@@ -231,6 +283,7 @@ I hope this helps with your project planning! Let me know if you need any clarif
       </table>
     `;
   }
+  
   function processContentForEmail(html) {
     // Create a temporary div to work with the HTML
     const tempDiv = document.createElement('div');

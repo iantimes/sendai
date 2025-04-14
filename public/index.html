@@ -24,6 +24,32 @@
       </label>
     </div>
     
+    <div class="md2email-options" style="margin-top: 15px;">
+      <span class="md2email-option-label">Verification:</span>
+      <label class="md2email-option">
+        <input type="checkbox" id="md2email-include-signature"> Include message
+      </label>
+      
+      <span id="md2email-signature-options" style="display: none;">
+        <label class="md2email-option">
+          <input type="radio" name="md2email-signature-position" value="top" checked> Top
+        </label>
+        <label class="md2email-option">
+          <input type="radio" name="md2email-signature-position" value="bottom"> Bottom
+        </label>
+        
+        <select id="md2email-signature-message" class="md2email-select">
+          <option value="verified">I've verified this AI response</option>
+          <option value="curated">This AI response has been reviewed</option>
+          <option value="endorsed">I endorse this AI response</option>
+          <option value="custom">Custom message...</option>
+        </select>
+        
+        <input type="text" id="md2email-custom-signature" class="md2email-text-input" 
+          placeholder="Custom message..." style="display: none; margin-left: 10px; width: 250px;">
+      </span>
+    </div>
+    
     <div class="md2email-editor-container">
       <div class="md2email-input-panel">
         <h2 class="md2email-panel-title">Paste LLM Response (Markdown)</h2>
