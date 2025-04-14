@@ -83,25 +83,38 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     
-    // Setup canvas for signature drawing
+    // Setup canvas for signature drawing - IMPROVED VERSION
     function setupCanvas() {
       // Get the canvas context
       ctx = signatureCanvas.getContext('2d');
       
-      // Set canvas size based on container
+      // Set canvas size based on container with pixel ratio adjustment
       const container = signatureCanvas.parentElement;
-      signatureCanvas.width = container.offsetWidth;
-      signatureCanvas.height = 150;
+      const pixelRatio = window.devicePixelRatio || 1;
+      
+      // Set display size (css pixels)
+      const width = container.offsetWidth;
+      const height = 150;
+      signatureCanvas.style.width = width + 'px';
+      signatureCanvas.style.height = height + 'px';
+      
+      // Set actual size in memory (scaled for hi-DPI)
+      signatureCanvas.width = width * pixelRatio;
+      signatureCanvas.height = height * pixelRatio;
+      
+      // Scale context to match pixel ratio
+      ctx.scale(pixelRatio, pixelRatio);
       
       // Clear canvas
       ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+      ctx.fillRect(0, 0, width, height);
       
       // Set drawing style
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 3; // Slightly thicker line for better visibility
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.strokeStyle = '#000';
+      ctx.imageSmoothingEnabled = true; // Enable anti-aliasing
       
       // Remove existing event listeners to prevent duplicates
       signatureCanvas.removeEventListener('pointerdown', startDrawing);
@@ -140,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function stopDrawing() {
       if (isDrawing) {
         isDrawing = false;
-        signatureData = signatureCanvas.toDataURL();
+        signatureData = signatureCanvas.toDataURL('image/png', 1.0); // Higher quality
       }
     }
     
@@ -155,8 +168,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Clear canvas
     function clearCanvas() {
+      const width = signatureCanvas.width / (window.devicePixelRatio || 1);
+      const height = signatureCanvas.height / (window.devicePixelRatio || 1);
       ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+      ctx.fillRect(0, 0, width, height);
       signatureData = null;
     }
     

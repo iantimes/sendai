@@ -233,6 +233,7 @@ I hope this helps with your project planning! Let me know if you need any clarif
     
     // Get the selected width
     const maxWidth = getSelectedWidth();
+    const numericWidth = parseInt(maxWidth.replace('px', ''));
     
     // Check if signature should be included
     const includeSignature = includeSignatureCheckbox.checked;
@@ -254,53 +255,52 @@ I hope this helps with your project planning! Let me know if you need any clarif
       }
       
       // Create signature HTML
-
-// Create signature HTML - Completely redesigned with signature support
-signatureHtml = `
-  <div style="padding: 14px 18px; margin: ${signaturePosition === 'top' ? '0 0 28px 0' : '28px 0 0 0'}; 
-              background: linear-gradient(to right, #e6f7ed, #f2f9f5); 
-              border-left: 5px solid #34a853; 
-              color: #0b5a2b; font-size: 15px; border-radius: 0 8px 8px 0;
-              box-shadow: 0 3px 10px rgba(52, 168, 83, 0.15); 
-              font-family: Arial, sans-serif;
-              letter-spacing: 0.3px; line-height: 1.5;
-              position: relative; overflow: hidden;">
-    <div style="display: flex; align-items: center;">
-      <span style="background-color: #34a853; color: white; border-radius: 50%; 
-                 width: 22px; height: 22px; display: inline-flex; justify-content: center; 
-                 align-items: center; margin-right: 10px; font-weight: bold; font-size: 14px;">✓</span>
-      <span style="font-weight: 600;">${signatureMessage}</span>
-    </div>
-    ${getSignatureHTML()}
-  </div>
-`;
-
-// Helper function to get signature HTML
-function getSignatureHTML() {
-  if (window.signatureModule && window.signatureModule.hasSignature()) {
-    const signature = window.signatureModule.getSignature();
-    if (signature.type === 'initials') {
-      return `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(52, 168, 83, 0.3); font-family: 'Brush Script MT', cursive; font-size: 22px; color: #0b5a2b;">${signature.data}</div>`;
-    } else if (signature.type === 'draw') {
-      return `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(52, 168, 83, 0.3);"><img src="${signature.data}" alt="Signature" style="height: 50px; max-width: 150px;"></div>`;
-    }
-  }
-  return '';
-}
-
-
-
+      signatureHtml = `
+        <div style="padding: 14px 18px; margin: ${signaturePosition === 'top' ? '0 0 28px 0' : '28px 0 0 0'}; 
+                    background: linear-gradient(to right, #e6f7ed, #f2f9f5); 
+                    border-left: 5px solid #34a853; 
+                    color: #0b5a2b; font-size: 15px; border-radius: 0 8px 8px 0;
+                    box-shadow: 0 3px 10px rgba(52, 168, 83, 0.15); 
+                    font-family: Arial, sans-serif;
+                    letter-spacing: 0.3px; line-height: 1.5;
+                    position: relative; overflow: hidden;">
+          <div style="display: flex; align-items: center;">
+            <span style="background-color: #34a853; color: white; border-radius: 50%; 
+                       width: 22px; height: 22px; display: inline-flex; justify-content: center; 
+                       align-items: center; margin-right: 10px; font-weight: bold; font-size: 14px;">✓</span>
+            <span style="font-weight: 600;">${signatureMessage}</span>
+          </div>
+          ${getSignatureHTML()}
+        </div>
+      `;
+  
+      // Helper function to get signature HTML
+      function getSignatureHTML() {
+        if (window.signatureModule && window.signatureModule.hasSignature()) {
+          const signature = window.signatureModule.getSignature();
+          if (signature.type === 'initials') {
+            return `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(52, 168, 83, 0.3); font-family: 'Brush Script MT', cursive; font-size: 22px; color: #0b5a2b;">${signature.data}</div>`;
+          } else if (signature.type === 'draw') {
+            return `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(52, 168, 83, 0.3);"><img src="${signature.data}" alt="Signature" style="height: 50px; max-width: 150px;"></div>`;
+          }
+        }
+        return '';
+      }
     }
     
     // Create a table-based layout that Gmail will preserve
-    // This uses a structure Gmail is less likely to strip out
+    // This uses a structure Gmail is less likely to strip out, with improved width control
     return `
-      <table cellspacing="0" cellpadding="0" border="0" style="width: 100%; max-width: ${maxWidth}; border-collapse: collapse; background-color: #f9fafc; border-radius: 8px; border: 1px solid #e1e4e8; font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0 auto;">
+      <table cellspacing="0" cellpadding="0" border="0" width="${numericWidth}" 
+        style="width: ${maxWidth}; max-width: ${maxWidth}; border-collapse: collapse; 
+        background-color: #f9fafc; border-radius: 8px; border: 1px solid #e1e4e8; 
+        font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif; margin: 0 auto; 
+        table-layout: fixed;" align="center">
         <tr>
           <td style="height: 6px; background-color: #4285f4; border-radius: 8px 8px 0 0;"></td>
         </tr>
         <tr>
-          <td style="padding: 20px 25px;">
+          <td style="padding: 20px 25px; width: ${maxWidth};" width="${numericWidth}">
             ${includeSignature && document.querySelector('input[name="md2email-signature-position"]:checked').value === 'top' ? signatureHtml : ''}
             ${processedContent}
             ${includeSignature && document.querySelector('input[name="md2email-signature-position"]:checked').value === 'bottom' ? signatureHtml : ''}
