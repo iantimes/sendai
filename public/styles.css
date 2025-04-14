@@ -103,6 +103,14 @@
     position: relative;
     padding: 20px;
     background-color: #f5f7f9;
+    display: flex;
+    justify-content: center; 
+  }
+  
+  #md2email-preview {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
   
   .md2email-button {
