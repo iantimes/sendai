@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+export function initSignatureModule(updatePreview) {
     // DOM elements
     const includeSignatureCheckbox = document.getElementById('md2email-include-signature');
     const signatureButton = document.getElementById('md2email-include-signature-btn');
@@ -28,6 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     signatureButton.addEventListener('click', () => {
       modal.style.display = 'block';
       setupCanvas();
+      
+      // Pre-populate with any saved signature
+      loadSavedSignature();
     });
     
     // Close modal functions
@@ -83,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     
-    // Setup canvas for signature drawing - IMPROVED VERSION
+    // Setup canvas for signature drawing
     function setupCanvas() {
       // Get the canvas context
       ctx = signatureCanvas.getContext('2d');
@@ -184,6 +187,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       
+      // Save the signature
+      saveSignature(signatureType, signatureData);
+      
       // Close the modal
       modal.style.display = 'none';
       
@@ -191,8 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
       updateVerificationMessage();
       
       // Update the preview
-      if (typeof window.updatePreview === 'function') {
-        window.updatePreview();
+      if (typeof updatePreview === 'function') {
+        updatePreview();
       }
     });
     
@@ -202,6 +208,59 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.dataset.signatureType = signatureType;
       document.body.dataset.signatureData = signatureData;
     }
+    
+    // Save signature to localStorage
+    function saveSignature(type, data) {
+      try {
+        localStorage.setItem('sendai-signature-type', type);
+        localStorage.setItem('sendai-signature-data', data);
+      } catch (error) {
+        console.error('Error saving signature:', error);
+      }
+    }
+    
+    // Load saved signature from localStorage
+    function loadSavedSignature() {
+      try {
+        const savedType = localStorage.getItem('sendai-signature-type');
+        const savedData = localStorage.getItem('sendai-signature-data');
+        
+        if (savedType && savedData) {
+          // Set the signature type tab
+          const tabBtn = document.querySelector(`.signature-tab-btn[data-tab="${savedType}"]`);
+          if (tabBtn) tabBtn.click();
+          
+          // Load the signature data
+          signatureType = savedType;
+          signatureData = savedData;
+          
+          if (savedType === 'initials') {
+            initialsInput.value = savedData;
+            initialsPreview.textContent = savedData;
+            initialsPreview.style.display = 'flex';
+          } else if (savedType === 'draw') {
+            // Load image to canvas
+            const img = new Image();
+            img.onload = function() {
+              const width = signatureCanvas.width / (window.devicePixelRatio || 1);
+              const height = signatureCanvas.height / (window.devicePixelRatio || 1);
+              ctx.clearRect(0, 0, width, height);
+              ctx.drawImage(img, 0, 0, width, height);
+            };
+            img.src = savedData;
+          }
+          
+          // Update body dataset
+          document.body.dataset.signatureType = signatureType;
+          document.body.dataset.signatureData = signatureData;
+        }
+      } catch (error) {
+        console.error('Error loading saved signature:', error);
+      }
+    }
+    
+    // Initialize by loading any saved signature
+    loadSavedSignature();
     
     // Expose necessary functions to the global scope
     window.signatureModule = {
@@ -217,6 +276,13 @@ document.addEventListener('DOMContentLoaded', () => {
       clearSignature: function() {
         delete document.body.dataset.signatureType;
         delete document.body.dataset.signatureData;
+        try {
+          localStorage.removeItem('sendai-signature-type');
+          localStorage.removeItem('sendai-signature-data');
+        } catch (e) {
+          console.error('Error clearing signature data:', e);
+        }
       }
     };
-});
+  }
+  

@@ -1,114 +1,37 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const markdownInput = document.getElementById('md2email-markdown-input');
-  const previewElement = document.getElementById('md2email-preview');
-  const copyFormattedBtn = document.getElementById('md2email-copy-formatted');
-  const copyHtmlBtn = document.getElementById('md2email-copy-html');
-  const copyTextBtn = document.getElementById('md2email-copy-text');
-  const statusElement = document.getElementById('md2email-status');
-  const manualCopyInfo = document.getElementById('md2email-manual-copy-info');
-  const hiddenTextarea = document.getElementById('md2email-textarea-html');
-  const includeSignatureCheckbox = document.getElementById('md2email-include-signature');
-  const signatureOptions = document.getElementById('md2email-signature-options');
-  const signatureMessageSelect = document.getElementById('md2email-signature-message');
-  const customSignatureInput = document.getElementById('md2email-custom-signature');
-  
-  // Configure marked.js
-  marked.use({
-    breaks: true,
-    gfm: true,
-    headerIds: false 
-  });
-  
-  // Initial examples to help users
-  const exampleMarkdown = `# LLM Response on Project Planning
-
-Thank you for your question about project planning. Here's a comprehensive framework to help you get started:
-
-## 1. Project Definition Phase
-
-Before diving into execution, ensure you have:
-
-- **Clear objectives**: Define what success looks like
-- **Scope boundaries**: Determine what's in and out of scope
-- **Key stakeholders**: Identify who needs to be involved
-
-## 2. Planning Approach
-
-The most effective planning typically follows this structure:
-
-\`\`\`
-1. Break down large goals into manageable tasks
-2. Estimate time and resources required
-3. Identify dependencies between tasks
-4. Build in buffer time for unexpected issues
-\`\`\`
-
-> "Plans are worthless, but planning is everything." - Dwight D. Eisenhower
-
-### Risk Management
-
-Always account for potential risks:
-
-| Risk Category | Example | Mitigation Strategy |
-|---------------|---------|---------------------|
-| Technical | System failure | Redundancy plans |
-| Resource | Team member unavailable | Cross-training |
-| External | Regulatory changes | Regular compliance checks |
-
-I hope this helps with your project planning! Let me know if you need any clarification or have additional questions.`;
-
-  markdownInput.value = exampleMarkdown;
-  
-  // Initial render
-  updatePreview();
-  
-  // Live preview
-  markdownInput.addEventListener('input', updatePreview);
-  
-  // Add event listeners for width options
-  document.querySelectorAll('input[name="md2email-width"]').forEach(radio => {
-    radio.addEventListener('change', updatePreview);
-  });
-  
-  // Add event listeners for signature options
-  includeSignatureCheckbox.addEventListener('change', function() {
-    signatureOptions.style.display = this.checked ? 'inline' : 'none';
-    updatePreview();
-  });
-
-  signatureMessageSelect.addEventListener('change', function() {
-    customSignatureInput.style.display = this.value === 'custom' ? 'inline-block' : 'none';
-    updatePreview();
-  });
-
-  customSignatureInput.addEventListener('input', updatePreview);
-
-  document.querySelectorAll('input[name="md2email-signature-position"]').forEach(radio => {
-    radio.addEventListener('change', updatePreview);
-  });
-  
-  function updatePreview() {
-    const markdown = markdownInput.value;
-    try {
-      const html = marked.parse(markdown);
-      
-      // Create the Gmail-friendly HTML
-      const emailHtml = createGmailFriendlyEmail(html);
-      
-      // Update the preview
-      previewElement.innerHTML = emailHtml;
-      
-      showStatus('', '');
-
-      window.updatePreview = updatePreview;
-    } catch (error) {
-      console.error(error);
-      showUIFeedback('Error rendering markdown', 'error');
+export function setupMarkdownProcessor(marked) {
+    const markdownInput = document.getElementById('md2email-markdown-input');
+    const previewElement = document.getElementById('md2email-preview');
+    
+    // Set initial example
+    markdownInput.value = getExampleMarkdown();
+    
+    // Update preview function
+    function updatePreview() {
+      const markdown = markdownInput.value;
+      try {
+        const html = marked.parse(markdown);
+        
+        // Create the Gmail-friendly HTML
+        const emailHtml = createGmailFriendlyEmail(html);
+        
+        // Update the preview
+        previewElement.innerHTML = emailHtml;
+        
+        showStatus('', '');
+      } catch (error) {
+        console.error(error);
+        showUIFeedback('Error rendering markdown', 'error');
+      }
     }
+    
+    // Add input event listener
+    markdownInput.addEventListener('input', updatePreview);
+    
+    return updatePreview;
   }
   
   // Get the selected width
-  function getSelectedWidth() {
+  export function getSelectedWidth() {
     const selectedOption = document.querySelector('input[name="md2email-width"]:checked');
     if (!selectedOption) return '600px'; // Default to medium if none selected
     
@@ -120,114 +43,8 @@ I hope this helps with your project planning! Let me know if you need any clarif
     }
   }
   
-  
-  // Copy formatted content for Gmail - New implementation
-  copyFormattedBtn.addEventListener('click', () => {
-    try {
-      // Get the content to copy
-      const contentToCopy = previewElement.innerHTML;
-      
-      // METHOD 1: Use the ClipboardItem API (modern browsers)
-      if (navigator.clipboard && navigator.clipboard.write) {
-        const htmlBlob = new Blob([contentToCopy], { type: 'text/html' });
-        const textBlob = new Blob([previewElement.textContent], { type: 'text/plain' });
-        
-        navigator.clipboard.write([
-          new ClipboardItem({
-            'text/html': htmlBlob,
-            'text/plain': textBlob
-          })
-        ]).then(() => {
-          showUIFeedback('Content copied! Paste directly into Gmail composer.', 'success');
-          manualCopyInfo.classList.remove('show');
-        }).catch(err => {
-          console.warn('Clipboard API write failed, trying alternative method', err);
-          fallbackCopyMethod();
-        });
-      } else {
-        fallbackCopyMethod();
-      }
-    } catch (error) {
-      console.error('Copy error:', error);
-      fallbackCopyMethod();
-    }
-    
-    // Fallback method using execCommand
-    function fallbackCopyMethod() {
-      try {
-        // Select the content in the preview
-        const range = document.createRange();
-        range.selectNodeContents(previewElement);
-        
-        const selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-        
-        // Try to copy
-        const successful = document.execCommand('copy');
-        
-        if (successful) {
-          showUIFeedback('Content copied! Paste directly into Gmail composer.', 'success');
-          manualCopyInfo.classList.remove('show');
-        } else {
-          showManualCopyInfo();
-        }
-        
-        // Clear selection
-        selection.removeAllRanges();
-      } catch (err) {
-        console.error('Fallback copy method failed', err);
-        showManualCopyInfo();
-      }
-    }
-    
-    function showManualCopyInfo() {
-      showUIFeedback('Automatic copy failed. Please try manual selection or HTML copy.', 'error');
-      manualCopyInfo.classList.add('show');
-    }
-  });
-  
-  // Copy HTML button
-  copyHtmlBtn.addEventListener('click', () => {
-    try {
-      const htmlContent = previewElement.innerHTML;
-      hiddenTextarea.value = htmlContent;
-      hiddenTextarea.select();
-      
-      const successful = document.execCommand('copy');
-      
-      if (successful) {
-        showUIFeedback('HTML copied! Use Gmail\'s "Insert as HTML" option.', 'success');
-      } else {
-        showUIFeedback('Failed to copy HTML. Try again.', 'error');
-      }
-    } catch (error) {
-      console.error('HTML copy error:', error);
-      showUIFeedback('Error copying HTML.', 'error');
-    }
-  });
-  
-  // Copy plain text
-  copyTextBtn.addEventListener('click', () => {
-    try {
-      const text = previewElement.textContent;
-      hiddenTextarea.value = text;
-      hiddenTextarea.select();
-      
-      const successful = document.execCommand('copy');
-      
-      if (successful) {
-        showUIFeedback('Plain text copied!', 'success');
-      } else {
-        showUIFeedback('Failed to copy text. Try again.', 'error');
-      }
-    } catch (error) {
-      console.error('Text copy error:', error);
-      showUIFeedback('Error copying text.', 'error');
-    }
-  });
-  
-  function createGmailFriendlyEmail(contentHtml) {
+  // Create a Gmail-friendly email from HTML content
+  export function createGmailFriendlyEmail(contentHtml) {
     // Process the content HTML with inline styles
     const processedContent = processContentForEmail(contentHtml);
     
@@ -236,7 +53,7 @@ I hope this helps with your project planning! Let me know if you need any clarif
     const numericWidth = parseInt(maxWidth.replace('px', ''));
     
     // Check if signature should be included
-    const includeSignature = includeSignatureCheckbox.checked;
+    const includeSignature = document.getElementById('md2email-include-signature').checked;
     let signatureHtml = '';
     
     if (includeSignature) {
@@ -245,7 +62,9 @@ I hope this helps with your project planning! Let me know if you need any clarif
       
       // Get signature message
       let signatureMessage = '';
+      const signatureMessageSelect = document.getElementById('md2email-signature-message');
       const selectedMessageType = signatureMessageSelect.value;
+      const customSignatureInput = document.getElementById('md2email-custom-signature');
       
       if (selectedMessageType === 'custom') {
         signatureMessage = customSignatureInput.value.trim() || 'I\'ve verified this AI response';
@@ -289,7 +108,6 @@ I hope this helps with your project planning! Let me know if you need any clarif
     }
     
     // Create a table-based layout that Gmail will preserve
-    // This uses a structure Gmail is less likely to strip out, with improved width control
     return `
       <table cellspacing="0" cellpadding="0" border="0" width="${numericWidth}" 
         style="width: ${maxWidth}; max-width: ${maxWidth}; border-collapse: collapse; 
@@ -315,7 +133,8 @@ I hope this helps with your project planning! Let me know if you need any clarif
     `;
   }
   
-  function processContentForEmail(html) {
+  // Process content for email with inline styles
+  export function processContentForEmail(html) {
     // Create a temporary div to work with the HTML
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
@@ -455,7 +274,9 @@ I hope this helps with your project planning! Let me know if you need any clarif
     return tempDiv.innerHTML;
   }
   
-  function showStatus(message, type) {
+  // Display status message
+  export function showStatus(message, type) {
+    const statusElement = document.getElementById('md2email-status');
     // Clear existing classes
     statusElement.className = 'md2email-status';
     
@@ -475,8 +296,9 @@ I hope this helps with your project planning! Let me know if you need any clarif
       statusElement.style.display = 'none';
     }, 3000);
   }
-
-  function showUIFeedback(message, type = "info") {
+  
+  // Display UI feedback toast
+  export function showUIFeedback(message, type = "info") {
     let uiFeedbackContainer = document.querySelector(".ui-feedback-container");
   
     if (!uiFeedbackContainer) {
@@ -523,4 +345,44 @@ I hope this helps with your project planning! Let me know if you need any clarif
       clearTimeout(timeout);
     });
   }
-});
+  
+  // Example markdown for initial load
+  function getExampleMarkdown() {
+    return `# LLM Response on Project Planning
+  
+  Thank you for your question about project planning. Here's a comprehensive framework to help you get started:
+  
+  ## 1. Project Definition Phase
+  
+  Before diving into execution, ensure you have:
+  
+  - **Clear objectives**: Define what success looks like
+  - **Scope boundaries**: Determine what's in and out of scope
+  - **Key stakeholders**: Identify who needs to be involved
+  
+  ## 2. Planning Approach
+  
+  The most effective planning typically follows this structure:
+  
+  \`\`\`
+  1. Break down large goals into manageable tasks
+  2. Estimate time and resources required
+  3. Identify dependencies between tasks
+  4. Build in buffer time for unexpected issues
+  \`\`\`
+  
+  > "Plans are worthless, but planning is everything." - Dwight D. Eisenhower
+  
+  ### Risk Management
+  
+  Always account for potential risks:
+  
+  | Risk Category | Example | Mitigation Strategy |
+  |---------------|---------|---------------------|
+  | Technical | System failure | Redundancy plans |
+  | Resource | Team member unavailable | Cross-training |
+  | External | Regulatory changes | Regular compliance checks |
+  
+  I hope this helps with your project planning! Let me know if you need any clarification or have additional questions.`;
+  }
+  

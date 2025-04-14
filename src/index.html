@@ -4,9 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SendAI - LLM Response Formatter</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="signature.css">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="./css/styles.css">
+  <link rel="stylesheet" href="./css/signature.css">
+  <!-- <link rel="icon" href="./assets/favicon.ico" type="image/x-icon"> -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📧</text></svg>">
+
+  <meta name="description" content="SendAI makes AI-generated responses look professional for email sending">
 </head>
 <body>
   <div class="md2email-container">
@@ -118,9 +121,7 @@
     </div>
   </div>
   
-  <!-- Use the browser-friendly version of Marked -->
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <script src="signature.js"></script>
-  <script src="script.js"></script>
+  <!-- Main application script -->
+  <script type="module" src="./js/app.js"></script>
 </body>
 </html>

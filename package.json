@@ -1,0 +1,27 @@
+{
+    "name": "sendai",
+    "version": "1.0.0",
+    "description": "AI LLM Response Formatter for Email",
+    "source": "./src/index.html",
+    "browserslist": "> 0.5%, last 2 versions, not dead",
+    "scripts": {
+      "start": "parcel ./src/index.html",
+      "build": "parcel build ./src/index.html --public-url ./"
+    },
+    "keywords": [
+      "markdown",
+      "email",
+      "formatter",
+      "AI",
+      "LLM"
+    ],
+    "author": "",
+    "license": "MIT",
+    "devDependencies": {
+      "parcel": "^2.9.3"
+    },
+    "dependencies": {
+      "marked": "^9.0.0"
+    }
+  }
+  
