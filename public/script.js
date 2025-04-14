@@ -252,13 +252,27 @@ I hope this helps with your project planning! Let me know if you need any clarif
       }
       
       // Create signature HTML
-      signatureHtml = `
-        <div style="padding: 10px 15px; margin: ${signaturePosition === 'top' ? '0 0 20px 0' : '20px 0 0 0'}; 
-                    background-color: #f2f7ff; border-left: 3px solid #4285f4; 
-                    font-style: italic; color: #555; font-size: 14px; border-radius: 0 4px 4px 0;">
-          ${signatureMessage}
-        </div>
-      `;
+
+// Create signature HTML - Completely redesigned to stand out more
+signatureHtml = `
+  <div style="padding: 14px 18px; margin: ${signaturePosition === 'top' ? '0 0 28px 0' : '28px 0 0 0'}; 
+              background: linear-gradient(to right, #e6f7ed, #f2f9f5); 
+              border-left: 5px solid #34a853; 
+              color: #0b5a2b; font-size: 15px; border-radius: 0 8px 8px 0;
+              box-shadow: 0 3px 10px rgba(52, 168, 83, 0.15); 
+              font-family: Arial, sans-serif;
+              letter-spacing: 0.3px; line-height: 1.5;
+              position: relative; overflow: hidden;">
+    <div style="display: flex; align-items: center;">
+      <span style="background-color: #34a853; color: white; border-radius: 50%; 
+                 width: 22px; height: 22px; display: inline-flex; justify-content: center; 
+                 align-items: center; margin-right: 10px; font-weight: bold; font-size: 14px;">✓</span>
+      <span style="font-weight: 600;">${signatureMessage}</span>
+    </div>
+  </div>
+`;
+
+
     }
     
     // Create a table-based layout that Gmail will preserve
