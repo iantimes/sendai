@@ -99,6 +99,8 @@ I hope this helps with your project planning! Let me know if you need any clarif
       previewElement.innerHTML = emailHtml;
       
       showStatus('', '');
+
+      window.updatePreview = updatePreview;
     } catch (error) {
       console.error(error);
       showUIFeedback('Error rendering markdown', 'error');
@@ -253,7 +255,7 @@ I hope this helps with your project planning! Let me know if you need any clarif
       
       // Create signature HTML
 
-// Create signature HTML - Completely redesigned to stand out more
+// Create signature HTML - Completely redesigned with signature support
 signatureHtml = `
   <div style="padding: 14px 18px; margin: ${signaturePosition === 'top' ? '0 0 28px 0' : '28px 0 0 0'}; 
               background: linear-gradient(to right, #e6f7ed, #f2f9f5); 
@@ -269,8 +271,23 @@ signatureHtml = `
                  align-items: center; margin-right: 10px; font-weight: bold; font-size: 14px;">✓</span>
       <span style="font-weight: 600;">${signatureMessage}</span>
     </div>
+    ${getSignatureHTML()}
   </div>
 `;
+
+// Helper function to get signature HTML
+function getSignatureHTML() {
+  if (window.signatureModule && window.signatureModule.hasSignature()) {
+    const signature = window.signatureModule.getSignature();
+    if (signature.type === 'initials') {
+      return `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(52, 168, 83, 0.3); font-family: 'Brush Script MT', cursive; font-size: 22px; color: #0b5a2b;">${signature.data}</div>`;
+    } else if (signature.type === 'draw') {
+      return `<div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(52, 168, 83, 0.3);"><img src="${signature.data}" alt="Signature" style="height: 50px; max-width: 150px;"></div>`;
+    }
+  }
+  return '';
+}
+
 
 
     }

@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SendAI - LLM Response Formatter</title>
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="signature.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
@@ -29,6 +30,11 @@
       <label class="md2email-option">
         <input type="checkbox" id="md2email-include-signature"> Include message
       </label>
+      
+      <button id="md2email-include-signature-btn" class="md2email-button md2email-signature-btn" 
+        style="display: none; background-color: #fb8c00; margin-left: 10px; padding: 6px 12px; font-size: 13px;">
+        Add Initials/Signature
+      </button>
       
       <span id="md2email-signature-options" style="display: none;">
         <label class="md2email-option">
@@ -77,8 +83,44 @@
   <!-- Hidden textarea for HTML copying -->
   <textarea id="md2email-textarea-html" readonly></textarea>
   
+  <!-- Signature Modal -->
+  <div id="signature-modal" class="signature-modal">
+    <div class="signature-modal-content">
+      <span class="signature-modal-close">&times;</span>
+      <h2>Add Your Verification</h2>
+      
+      <div class="signature-tabs">
+        <button class="signature-tab-btn active" data-tab="initials">Use Initials</button>
+        <button class="signature-tab-btn" data-tab="draw">Draw Signature</button>
+      </div>
+      
+      <div id="initials-tab" class="signature-tab-content active">
+        <p>Enter your initials to verify this response:</p>
+        <input type="text" id="initials-input" class="signature-input" maxlength="5" placeholder="Your initials (e.g., JD)">
+        <div class="signature-preview-container">
+          <p>Preview:</p>
+          <div id="initials-preview" class="signature-preview"></div>
+        </div>
+      </div>
+      
+      <div id="draw-tab" class="signature-tab-content">
+        <p>Draw your signature below:</p>
+        <div class="signature-canvas-container">
+          <canvas id="signature-canvas"></canvas>
+        </div>
+        <button id="clear-signature" class="signature-button">Clear</button>
+      </div>
+      
+      <div class="signature-modal-buttons">
+        <button id="cancel-signature" class="signature-button">Cancel</button>
+        <button id="save-signature" class="signature-button save-button">Save & Use</button>
+      </div>
+    </div>
+  </div>
+  
   <!-- Use the browser-friendly version of Marked -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="signature.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
