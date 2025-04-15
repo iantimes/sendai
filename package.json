@@ -5,23 +5,26 @@
     "source": "./src/index.html",
     "browserslist": "> 0.5%, last 2 versions, not dead",
     "scripts": {
-      "start": "parcel ./src/index.html",
-      "build": "parcel build ./src/index.html --public-url ./"
+        "clean": "del-cli dist .parcel-cache",
+        "start": "parcel",
+        "build": "npm run clean && parcel build --dist-dir ./dist"
     },
     "keywords": [
-      "markdown",
-      "email",
-      "formatter",
-      "AI",
-      "LLM"
+        "markdown",
+        "email",
+        "formatter",
+        "AI",
+        "LLM"
     ],
     "author": "",
     "license": "MIT",
     "devDependencies": {
-      "parcel": "^2.9.3"
+        "@parcel/packager-raw-url": "^2.14.4",
+        "@parcel/transformer-webmanifest": "^2.14.4",
+        "del-cli": "^6.0.0",
+        "parcel": "^2.9.3"
     },
     "dependencies": {
-      "marked": "^9.0.0"
+        "marked": "^9.0.0"
     }
-  }
-  
+}

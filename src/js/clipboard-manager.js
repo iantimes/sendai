@@ -1,4 +1,5 @@
-import { showUIFeedback } from './markdown-processor.js';
+import { showUIFeedback } from './utility.js';
+
 
 export function setupClipboardManager() {
   const copyFormattedBtn = document.getElementById('md2email-copy-formatted');
