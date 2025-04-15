@@ -56,7 +56,7 @@
   margin-bottom: 20px;
 }
 
-.md2email-input-panel, 
+.md2email-input-panel,
 .md2email-output-panel {
   flex: 1;
   display: flex;
@@ -104,7 +104,7 @@
   padding: 20px;
   background-color: #f5f7f9;
   display: flex;
-  justify-content: center; 
+  justify-content: center;
 }
 
 #md2email-preview {
@@ -192,15 +192,15 @@
   .md2email-editor-container {
     flex-direction: column;
   }
-  
+
   .md2email-button-container {
     flex-wrap: wrap;
   }
-  
+
   .md2email-button {
     margin-bottom: 8px;
   }
-  
+
   #md2email-signature-options {
     display: flex;
     flex-direction: column;
@@ -208,7 +208,7 @@
     margin-top: 10px;
     margin-left: 20px;
   }
-  
+
   .md2email-select, .md2email-text-input {
     margin-top: 8px;
     margin-left: 0;
@@ -289,4 +289,8 @@
   background-color: #eff6ff;
   color: #1e40af;
   border: 1px solid #bfdbfe;
+}
+
+#md2email-include-signature-btn {
+  margin-top: 0px;
 }
