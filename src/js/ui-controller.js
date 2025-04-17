@@ -9,11 +9,25 @@ export function setupUIController(updatePreview) {
       radio.addEventListener('change', updatePreview);
     });
     
-    // Add event listeners for signature options
+   // Consolidated event listener for signature checkbox
     includeSignatureCheckbox.addEventListener('change', function() {
+      const signatureButton = document.getElementById('md2email-include-signature-btn');
+      const verificationExplanation = document.getElementById('md2email-verification-explanation');
+      
+      // Update UI visibility
       signatureOptions.style.display = this.checked ? 'inline' : 'none';
+      signatureButton.style.display = this.checked ? 'inline-block' : 'none';
+      verificationExplanation.style.display = this.checked ? 'block' : 'none';
+      
+      // Update preview
       updatePreview();
+      
+      // Save preferences
+      savePreferences();
     });
+
+
+
   
     signatureMessageSelect.addEventListener('change', function() {
       customSignatureInput.style.display = this.value === 'custom' ? 'inline-block' : 'none';
@@ -58,6 +72,10 @@ export function setupUIController(updatePreview) {
           if (preferences.includeSignature !== undefined) {
             includeSignatureCheckbox.checked = preferences.includeSignature;
             signatureOptions.style.display = preferences.includeSignature ? 'inline' : 'none';
+            document.getElementById('md2email-include-signature-btn').style.display = 
+              preferences.includeSignature ? 'inline-block' : 'none';
+            document.getElementById('md2email-verification-explanation').style.display = 
+              preferences.includeSignature ? 'block' : 'none';
           }
           
           if (preferences.signaturePosition) {
@@ -86,7 +104,6 @@ export function setupUIController(updatePreview) {
       radio.addEventListener('change', savePreferences);
     });
     
-    includeSignatureCheckbox.addEventListener('change', savePreferences);
     document.querySelectorAll('input[name="md2email-signature-position"]').forEach(radio => {
       radio.addEventListener('change', savePreferences);
     });

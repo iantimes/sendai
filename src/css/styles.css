@@ -294,3 +294,29 @@
 #md2email-include-signature-btn {
   margin-top: 0px;
 }
+
+
+/* Verification explanation styling */
+.md2email-explanation {
+  margin-top: 15px;
+  padding: 12px 16px;
+  background-color: #f8f9fa;
+  border-left: 4px solid #4285f4;
+  border-radius: 0 4px 4px 0;
+  font-size: 14px;
+  color: #505050;
+  max-width: 800px;
+}
+
+.md2email-explanation p {
+  margin: 8px 0;
+}
+
+.md2email-explanation ul {
+  margin: 8px 0;
+  padding-left: 25px;
+}
+
+.md2email-explanation li {
+  margin-bottom: 5px;
+}

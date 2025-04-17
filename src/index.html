@@ -29,7 +29,6 @@
         <input type="radio" name="md2email-width" value="large"> Large
       </label>
     </div>
-    
     <div class="md2email-options" style="margin-top: 15px;">
       <span class="md2email-option-label">Verification:</span>
       <label class="md2email-option">
@@ -60,6 +59,18 @@
           placeholder="Custom message..." style="display: none; margin-left: 10px; width: 250px;">
       </span>
     </div>
+    
+    <!-- Move the explanation outside the options div and create a clear break -->
+    <div id="md2email-verification-explanation" class="md2email-explanation" style="display: none; clear: both; margin-top: 15px;">
+      <p><strong>Why verify AI responses?</strong> Adding your verification shows recipients that:</p>
+      <ul>
+        <li>You've reviewed the content for accuracy and stand behind it</li>
+        <li>You're being transparent about the AI-generated nature of the response</li>
+        <li>The information can be trusted despite being AI-generated</li>
+      </ul>
+      <p>This simple addition significantly increases the credibility and impact of AI-generated content.</p>
+    </div>
+    
     
     <div class="md2email-editor-container">
       <div class="md2email-input-panel">
